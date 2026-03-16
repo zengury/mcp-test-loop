@@ -1,0 +1,7 @@
+presets:
+  stop:
+    description: "Stop safely"
+  forward:
+    description: "Forward using /cmd_vel Twist"
+  forward_stamped:
+    description: "Forward using /cmd_vel_stamped TwistStamped"

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-test-loop"
+version = "0.1.0"
+description = "Minimal MCP + loop agent runtime for long-horizon ROS2 testing"
+readme = "../README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "zengury" }]
+
+dependencies = [
+  "mcp>=1.0.0",
+  "pyyaml>=6.0",
+  "gradio>=4.0.0",
+]
+
+[project.optional-dependencies]
+ros2 = []
+
+[project.scripts]
+# MCP control server
+mcp-test-loop-motion-control = "mcp_test_loop.servers.motion_control:main"
+# Robot-side executor
+mcp-test-loop-executor = "mcp_test_loop.control.preset_executor:main"
+# Operator UI
+mcp-test-loop-ui = "mcp_test_loop.control.ui:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_test_loop"]

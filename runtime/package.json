@@ -1,0 +1,21 @@
+{
+  "name": "mcp-test-loop-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --enable-source-maps --loader tsx src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js"
+  },
+  "dependencies": {
+    "@mariozechner/pi-agent-core": "^0.42.0",
+    "@mariozechner/pi-ai": "^0.42.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.2"
+  }
+}

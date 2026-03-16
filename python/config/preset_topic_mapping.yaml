@@ -1,0 +1,27 @@
+presets:
+  stop:
+    publish:
+      - topic: /cmd_vel
+        type: geometry_msgs/msg/Twist
+        msg:
+          linear: {x: 0.0, y: 0.0, z: 0.0}
+          angular: {x: 0.0, y: 0.0, z: 0.0}
+
+  forward:
+    publish:
+      - topic: /cmd_vel
+        type: geometry_msgs/msg/Twist
+        msg:
+          linear: {x: 0.2, y: 0.0, z: 0.0}
+          angular: {x: 0.0, y: 0.0, z: 0.0}
+
+  forward_stamped:
+    publish:
+      - topic: /cmd_vel_stamped
+        type: geometry_msgs/msg/TwistStamped
+        msg:
+          header:
+            stamp: {__now__: true}
+          twist:
+            linear: {x: 0.2, y: 0.0, z: 0.0}
+            angular: {x: 0.0, y: 0.0, z: 0.0}

@@ -1,0 +1,43 @@
+llm:
+  provider: google
+  model: gemini-2.5-flash-lite-preview-06-17
+  thinkingLevel: off
+  # apiKeyEnv: GOOGLE_API_KEY
+
+mcpServers:
+  # observation servers (replace with your manastone-core/joints/etc)
+  core:
+    sseUrl: http://192.168.123.164:8080/sse
+
+  # control server (this repo)
+  motion_control:
+    sseUrl: http://192.168.123.164:8087/sse
+
+loop:
+  intervalSec: 30
+  objective: |
+    长时稳定性测试：机器人持续行走收集数据。
+    若出现 CRITICAL 或明显跌倒风险，策略必须 STOP/HOLD。
+
+  observe:
+    - server: core
+      tool: system_status
+      label: overall health
+      timeoutMs: 8000
+    - server: core
+      tool: recent_events
+      args:
+        limit: 20
+      label: recent events
+      timeoutMs: 8000
+
+  act:
+    enabled: true
+    server: motion_control
+    tool: execute_preset
+    dryRun: true
+    timeoutMs: 8000
+
+  actionLog: ./mcp_loop_actions.jsonl
+  tickTimeoutMs: 60000
+  failureBackoffSec: 60
