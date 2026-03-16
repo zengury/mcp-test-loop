@@ -1,3 +1,7 @@
+# Robot-side mapping: preset -> traditional ROS2 publishes
+# This node subscribes to /manastone/motion_control/preset (std_msgs/String)
+# and executes publishes defined below.
+
 presets:
   stop:
     publish:

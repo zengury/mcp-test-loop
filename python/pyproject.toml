@@ -4,29 +4,55 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mcp-test-loop"
-version = "0.1.0"
-description = "Minimal MCP + loop agent runtime for long-horizon ROS2 testing"
+version = "0.2.0"
+description = "MCP Test Loop — long-horizon ROS2 test loop with integrated manastone observation + control"
 readme = "../README.md"
+license = {text = "MIT"}
+authors = [{name = "zengury"}]
 requires-python = ">=3.10"
-license = { text = "MIT" }
-authors = [{ name = "zengury" }]
 
+# NOTE: cyclonedds is optional (real DDS mode). Mock mode works without it.
 dependencies = [
   "mcp>=1.0.0",
-  "pyyaml>=6.0",
   "gradio>=4.0.0",
+  "httpx>=0.25.0",
+  "pydantic>=2.0.0",
+  "pyyaml>=6.0",
+  "numpy>=1.24.0",
 ]
 
 [project.optional-dependencies]
-ros2 = []
+dds = ["cyclonedds>=0.10.0"]
+dev = ["pytest>=7.0.0", "pytest-asyncio>=0.21.0", "black>=23.0.0", "ruff>=0.1.0"]
 
 [project.scripts]
-# MCP control server
-mcp-test-loop-motion-control = "mcp_test_loop.servers.motion_control:main"
-# Robot-side executor
-mcp-test-loop-executor = "mcp_test_loop.control.preset_executor:main"
-# Operator UI
-mcp-test-loop-ui = "mcp_test_loop.control.ui:main"
+# Observation / diagnosis MCP servers
+manastone-launcher = "manastone_diag.launcher:main"
+manastone-core    = "manastone_diag.servers.core:main"
+manastone-joints  = "manastone_diag.servers.joints:main"
+manastone-power   = "manastone_diag.servers.power:main"
+manastone-imu     = "manastone_diag.servers.imu:main"
+manastone-hand    = "manastone_diag.servers.hand:main"
+manastone-vision  = "manastone_diag.servers.vision:main"
+manastone-motion  = "manastone_diag.servers.motion:main"
+
+# Unified control plane (separate server)
+manastone-motion-control = "manastone_diag.servers.motion_control:main"
+manastone-motion-executor = "manastone_diag.control.preset_executor:main"
+manastone-control-ui = "manastone_diag.control.ui_control:main"
+
+# Compatibility aliases (same as above, but project-branded)
+mcp-test-loop-launcher = "manastone_diag.launcher:main"
+mcp-test-loop-motion-control = "manastone_diag.servers.motion_control:main"
+mcp-test-loop-executor = "manastone_diag.control.preset_executor:main"
+mcp-test-loop-ui = "manastone_diag.control.ui_control:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mcp_test_loop"]
+packages = ["src/manastone_diag"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100

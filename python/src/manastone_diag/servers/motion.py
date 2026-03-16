@@ -76,7 +76,7 @@ def create_server(**init_kwargs) -> FastMCP:
         return json.dumps({
             "active_motion_alerts": len(motion_warnings),
             "alerts": motion_warnings,
-        }, ensure_aware=False, indent=2)
+        }, ensure_ascii=False, indent=2)
 
     return mcp
 

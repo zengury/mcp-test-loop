@@ -27,30 +27,23 @@ using a YAML mapping.
 ## Repo layout
 
 - `runtime/` – Node.js loop runtime (YAML-configured)
-- `python/` – Control-plane MCP server + robot-side executor + Gradio UI
-- `vendor/mcp-ros-diagnosis/` – Vendored **observation/diagnosis** MCP servers (SSE) used as an observation source
+- `python/` – Integrated **observation/diagnosis** MCP servers + unified **control plane** + robot-side executor + Gradio UI
 
 ## Quick start (mock / no robot)
 
-This repo is now self-contained:
+This repo is self-contained.
 
-- Observation MCP servers are provided via the vendored `vendor/mcp-ros-diagnosis/` project.
-- Control MCP server + executor + UI are in `python/`.
+- Observation/diagnosis MCP servers + unified control plane + executor + UI are all in `python/`.
 - The LoopForever runtime is in `runtime/`.
 
-> Note: `vendor/mcp-ros-diagnosis` requires **Python >=3.10** (same as upstream). On ROS2 Humble (Ubuntu 22.04) you typically have Python 3.10.
+> Note: Requires **Python >=3.10**.
 
-### 0) Install Python packages
+### 0) Install Python package
 
 Create/activate a Python 3.10 environment, then:
 
 ```bash
-# Observation servers
-cd vendor/mcp-ros-diagnosis
-pip install -e .
-
-# Control server + executor + UI
-cd ../../python
+cd python
 pip install -e .
 ```
 
@@ -60,7 +53,7 @@ pip install -e .
 export MANASTONE_MOCK_MODE=true
 export MANASTONE_ROBOT_ID=robot_01
 
-# Starts core/joints/power/imu based on vendor config/servers.yaml
+# Starts core/joints/power/imu based on python/config/servers.yaml (paths are relative to the python/ dir)
 manastone-launcher
 
 # core SSE:   http://127.0.0.1:8080/sse
@@ -74,24 +67,24 @@ In a second terminal:
 ```bash
 # Enable control server but keep runtime in dryRun mode initially.
 export MANASTONE_ENABLE_CONTROL=true
-export MANASTONE_MOTION_CONTROL_TOPIC=/mcp_test_loop/preset
+export MANASTONE_MOTION_CONTROL_TOPIC=/manastone/motion_control/preset
 
-mcp-test-loop-motion-control --port 8087
+manastone-motion-control --port 8087
 ```
 
 In a third terminal:
 
 ```bash
-export MANASTONE_PRESET_TOPIC=/mcp_test_loop/preset
-export MANASTONE_PRESET_MAPPING=python/config/preset_topic_mapping.yaml
+export MANASTONE_PRESET_TOPIC=/manastone/motion_control/preset
+export MANASTONE_PRESET_MAPPING=config/preset_topic_mapping.yaml
 
-mcp-test-loop-executor
+manastone-motion-executor
 ```
 
 In a fourth terminal (optional UI):
 
 ```bash
-mcp-test-loop-ui
+manastone-control-ui
 ```
 
 ### 3) Start loop runtime

@@ -1,3 +1,6 @@
+# Motion control preset allowlist.
+# Only presets listed here can be executed via manastone-motion-control.
+
 presets:
   stop:
     description: "Stop safely"
