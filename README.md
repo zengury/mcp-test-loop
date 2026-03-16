@@ -67,7 +67,7 @@ In a second terminal:
 ```bash
 # Enable control server but keep runtime in dryRun mode initially.
 export MANASTONE_ENABLE_CONTROL=true
-export MANASTONE_MOTION_CONTROL_TOPIC=/manastone/motion_control/preset
+export MANASTONE_MOTION_CONTROL_TOPIC=/mcp_test_loop/preset
 
 manastone-motion-control --port 8087
 ```
@@ -75,7 +75,7 @@ manastone-motion-control --port 8087
 In a third terminal:
 
 ```bash
-export MANASTONE_PRESET_TOPIC=/manastone/motion_control/preset
+export MANASTONE_PRESET_TOPIC=/mcp_test_loop/preset
 export MANASTONE_PRESET_MAPPING=config/preset_topic_mapping.yaml
 
 manastone-motion-executor
@@ -112,3 +112,7 @@ Use the same components as above, but in **REAL ROS2** mode:
 - Run the loop runtime either on the robot or on a remote machine that can reach the robot MCP SSE endpoints.
 
 The loop writes JSONL logs (configurable) which the UI can display.
+
+## Configuration
+
+See `docs/CONFIG.md` for install/config/run instructions.

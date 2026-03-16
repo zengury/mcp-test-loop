@@ -1,5 +1,6 @@
 # Motion control preset allowlist.
 # Only presets listed here can be executed via manastone-motion-control.
+# The preset name will be published to a ROS2 topic (std_msgs/String), default: /mcp_test_loop/preset
 
 presets:
   stop:

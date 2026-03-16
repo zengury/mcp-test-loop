@@ -6,7 +6,7 @@ names into *traditional ROS2 control* publishes (topic + message).
 It is meant to be used together with the MCP server `manastone-motion-control`:
 
 - MCP server tool `execute_preset(preset)` publishes preset name to
-  `/manastone/motion_control/preset` (std_msgs/String)
+  `/mcp_test_loop/preset` (std_msgs/String)
 - This executor subscribes to that topic, looks up the preset in a YAML mapping,
   and publishes a configured message to your robot's control topic.
 
@@ -15,7 +15,7 @@ Why this split?
 - Robot-side mapping is explicit, reviewable, and can be adjusted without LLM.
 
 Env vars:
-- MANASTONE_PRESET_TOPIC (default: /manastone/motion_control/preset)
+- MANASTONE_PRESET_TOPIC (default: /mcp_test_loop/preset)
 - MANASTONE_PRESET_MAPPING (default: config/preset_topic_mapping.yaml)
 
 YAML format (example):
@@ -71,14 +71,31 @@ def _import_msg_class(type_str: str):
     return cls
 
 
-def _apply_dict_to_msg(msg_obj: Any, data: Dict[str, Any]) -> None:
-    """Recursively apply dict values to ROS2 message instance fields."""
+def _is_now_macro(v: Any) -> bool:
+    return isinstance(v, dict) and v.get("__now__") is True
+
+
+def _apply_dict_to_msg(msg_obj: Any, data: Dict[str, Any], now_time_msg: Any) -> None:
+    """Recursively apply dict values to ROS2 message instance fields.
+
+    Supports macro: {__now__: true} for Time-like fields (sec/nanosec).
+    """
     for k, v in data.items():
         if not hasattr(msg_obj, k):
             raise ValueError(f"Message {type(msg_obj).__name__} has no field '{k}'")
+
         cur = getattr(msg_obj, k)
+
+        if _is_now_macro(v):
+            # Only intended for builtin_interfaces/msg/Time-like objects
+            if hasattr(cur, "sec") and hasattr(cur, "nanosec"):
+                cur.sec = now_time_msg.sec
+                cur.nanosec = now_time_msg.nanosec
+                continue
+            raise ValueError(f"__now__ macro used on non-Time field: {type(cur).__name__}")
+
         if isinstance(v, dict):
-            _apply_dict_to_msg(cur, v)
+            _apply_dict_to_msg(cur, v, now_time_msg)
         else:
             setattr(msg_obj, k, v)
 
@@ -99,7 +116,7 @@ class PresetExecutor(Node):
     def __init__(self):
         super().__init__("manastone_preset_executor")
 
-        self.preset_topic = os.getenv("MANASTONE_PRESET_TOPIC", "/manastone/motion_control/preset")
+        self.preset_topic = os.getenv("MANASTONE_PRESET_TOPIC", "/mcp_test_loop/preset")
         mapping_path = Path(os.getenv("MANASTONE_PRESET_MAPPING", "config/preset_topic_mapping.yaml"))
         self.mapping_path = mapping_path
         self.mapping = _load_mapping(mapping_path)
@@ -137,6 +154,8 @@ class PresetExecutor(Node):
             self.get_logger().warn(f"Preset '{preset}' has no 'publish' actions. Ignored.")
             return
 
+        now_time_msg = self.get_clock().now().to_msg()
+
         for a in actions:
             try:
                 topic = a.get("topic")
@@ -154,7 +173,7 @@ class PresetExecutor(Node):
                 pub = self._get_publisher(topic, type_str)
                 cls = _import_msg_class(type_str)
                 out = cls()
-                _apply_dict_to_msg(out, msg_dict)
+                _apply_dict_to_msg(out, msg_dict, now_time_msg)
                 pub.publish(out)
                 self.get_logger().info(f"preset='{preset}' -> published {type_str} to {topic}")
             except Exception as e:

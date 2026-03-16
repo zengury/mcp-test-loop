@@ -15,7 +15,7 @@ manastone-motion-control
 环境变量：
   MANASTONE_ENABLE_CONTROL=true       # 必须显式开启控制（默认禁用）
   MANASTONE_MOTION_CONTROL_PRESETS=...  # YAML 路径（默认：config/motion_control_presets.yaml）
-  MANASTONE_MOTION_CONTROL_TOPIC=...    # 发布 topic（默认：/manastone/motion_control/preset）
+  MANASTONE_MOTION_CONTROL_TOPIC=...    # 发布 topic（默认：/mcp_test_loop/preset）
 
 YAML 格式：
   presets:
@@ -88,7 +88,7 @@ def _ensure_ros_publisher() -> None:
         if not rclpy.ok():
             rclpy.init(args=None)
 
-        topic = os.getenv("MANASTONE_MOTION_CONTROL_TOPIC", "/manastone/motion_control/preset")
+        topic = os.getenv("MANASTONE_MOTION_CONTROL_TOPIC", "/mcp_test_loop/preset")
 
         node = Node("manastone_motion_control_mcp")
         pub = node.create_publisher(String, topic, 10)
@@ -182,7 +182,7 @@ def create_server(**init_kwargs) -> FastMCP:
                     for n in names
                 ],
                 "topic": os.getenv(
-                    "MANASTONE_MOTION_CONTROL_TOPIC", "/manastone/motion_control/preset"
+                    "MANASTONE_MOTION_CONTROL_TOPIC", "/mcp_test_loop/preset"
                 ),
             },
             ensure_ascii=False,
@@ -222,7 +222,7 @@ def create_server(**init_kwargs) -> FastMCP:
                 indent=2,
             )
 
-        topic = os.getenv("MANASTONE_MOTION_CONTROL_TOPIC", "/manastone/motion_control/preset")
+        topic = os.getenv("MANASTONE_MOTION_CONTROL_TOPIC", "/mcp_test_loop/preset")
 
         if s.mock_mode or dry_run:
             return json.dumps(

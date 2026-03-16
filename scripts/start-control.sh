@@ -7,8 +7,8 @@ set -euo pipefail
 cd "$(dirname "$0")/../python"
 
 export MANASTONE_ENABLE_CONTROL=${MANASTONE_ENABLE_CONTROL:-true}
-export MANASTONE_MOTION_CONTROL_TOPIC=${MANASTONE_MOTION_CONTROL_TOPIC:-/manastone/motion_control/preset}
-export MANASTONE_PRESET_TOPIC=${MANASTONE_PRESET_TOPIC:-/manastone/motion_control/preset}
+export MANASTONE_MOTION_CONTROL_TOPIC=${MANASTONE_MOTION_CONTROL_TOPIC:-/mcp_test_loop/preset}
+export MANASTONE_PRESET_TOPIC=${MANASTONE_PRESET_TOPIC:-/mcp_test_loop/preset}
 
 # mapping path default points to this repo
 export MANASTONE_PRESET_MAPPING=${MANASTONE_PRESET_MAPPING:-config/preset_topic_mapping.yaml}
