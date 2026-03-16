@@ -1,0 +1,8 @@
+# Motion control preset allowlist.
+# Only presets listed here can be executed via manastone-motion-control.
+
+presets:
+  heart_hands:
+    description: "Make a heart gesture"
+  stop:
+    description: "Stop safely"

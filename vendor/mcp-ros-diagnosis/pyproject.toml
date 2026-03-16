@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "manastone-diagnostic"
+version = "0.4.0"
+description = "Manastone Diagnostic — Multi-server robot operations agent for Snakes™ platform"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Manastone Team"}]
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "gradio>=4.0.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+dds = ["cyclonedds>=0.10.0"]
+dev = ["pytest>=7.0.0", "pytest-asyncio>=0.21.0", "black>=23.0.0", "ruff>=0.1.0"]
+
+[project.scripts]
+# Multi-server launcher (recommended)
+manastone-launcher = "manastone_diag.launcher:main"
+# Individual servers (advanced / standalone use)
+manastone-core    = "manastone_diag.servers.core:main"
+manastone-joints  = "manastone_diag.servers.joints:main"
+manastone-power   = "manastone_diag.servers.power:main"
+manastone-imu     = "manastone_diag.servers.imu:main"
+manastone-hand    = "manastone_diag.servers.hand:main"
+manastone-vision  = "manastone_diag.servers.vision:main"
+manastone-motion  = "manastone_diag.servers.motion:main"
+manastone-motion-control = "manastone_diag.servers.motion_control:main"
+manastone-motion-executor = "manastone_diag.control.preset_executor:main"
+manastone-control-ui = "manastone_diag.control.ui_control:main"
+# Legacy single-server entry point (kept for backward compat)
+manastone-diag    = "manastone_diag.server:main"
+manastone-ui      = "manastone_diag.ui:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/manastone_diag"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
